@@ -46,6 +46,9 @@ class SpriteManager {
     async loadSheet(name, imgPath, plistPath) {
         this.total += 2;
         return new Promise(resolve => {
+            let done = 0;
+            const tryResolve = () => { if (++done === 2) resolve(); };
+
             const img = new Image();
             img.onload = () => { this.loaded++; tryResolve(); };
             img.onerror = () => { this.loaded++; tryResolve(); };
@@ -77,8 +80,6 @@ class SpriteManager {
                     tryResolve();
                 });
         });
-
-        function tryResolve() { /* resolved lazily */ }
     }
 
     async loadImage(name, path) {
