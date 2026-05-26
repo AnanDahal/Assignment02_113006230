@@ -1,11 +1,10 @@
-// Firebase integration – fill in your own config
 const firebaseConfig = {
-    apiKey:            "AIzaSyD-REPLACE-WITH-YOUR-KEY",
+    apiKey:            "AIzaSyAOvh-HlYc8L4RSBLOZvZ_GNIlLmuHVLJ0",
     authDomain:        "webmario-113006230.firebaseapp.com",
     projectId:         "webmario-113006230",
-    storageBucket:     "webmario-113006230.appspot.com",
-    messagingSenderId: "000000000000",
-    appId:             "1:000000000000:web:0000000000000000000000"
+    storageBucket:     "webmario-113006230.firebasestorage.app",
+    messagingSenderId: "974163210457",
+    appId:             "1:974163210457:web:91f77abe76b7add9d84ec8"
 };
 
 class FirebaseManager {
