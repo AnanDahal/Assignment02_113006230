@@ -10,6 +10,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(msg, C.W/2, C.H/2);
+        ctx.fillStyle = '#555';
+        ctx.font = '11px monospace';
+        ctx.fillText('build v5', C.W/2, C.H/2 + 30);
     }
 
     drawLoading('LOADING...');
