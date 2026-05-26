@@ -241,7 +241,6 @@ class Player {
 
     draw(ctx) {
         if (!this.alive) {
-            if (this.invincible && Math.floor(this.invTimer * 10) % 2 === 0) return;
             const sheet = this.big ? 'mario_big' : 'mario_small';
             sprites.drawFrame(ctx, sheet, this.dieFrame, this.x, this.y, !this.facingRight);
             return;

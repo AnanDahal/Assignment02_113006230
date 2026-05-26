@@ -241,7 +241,7 @@ class GameScene {
         if (!p.alive || p.invincible) return;
 
         this.enemies.forEach(e => {
-            if (!e.alive && !e.squished) return;
+            if (!e.alive) return;
             if (!this._overlaps(p, e)) return;
 
             // Check if stomping (player falling onto top of enemy)
