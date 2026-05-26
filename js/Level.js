@@ -10,7 +10,7 @@ class TileMap {
 
     get(col, row) {
         if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
-            return (row >= this.rows) ? C.T_GROUND : C.T_AIR;
+            return C.T_AIR;
         }
         return this.grid[row][col];
     }

@@ -62,9 +62,10 @@ class SpriteManager {
                     const rawFrames = data.frames || {};
                     const frames = {};
                     for (const [k, v] of Object.entries(rawFrames)) {
+                        const name = k.replace(/\.png$/i, '');
                         const rect = this._parseRect(v.textureRect || '{{0,0},{16,16}}');
                         const size = this._parseSize(v.spriteSize || '{16,16}');
-                        frames[k] = {
+                        frames[name] = {
                             sx: rect.x, sy: rect.y, sw: rect.w, sh: rect.h,
                             dw: size.w, dh: size.h,
                             rotated: v.textureRotated === true
