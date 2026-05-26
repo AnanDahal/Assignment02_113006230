@@ -287,9 +287,9 @@ class GameScene {
         this.coins.forEach(c => c.draw(ctx));
         this.mushrooms.forEach(m => m.draw(ctx));
 
-        // Enemies
+        // Enemies (only draw once activated so they don't appear off-ground during intro)
         this.enemies.forEach(e => {
-            if (e.alive || e.squished) e.draw(ctx);
+            if (e.active && (e.alive || e.squished)) e.draw(ctx);
         });
 
         // Player

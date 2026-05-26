@@ -105,9 +105,10 @@ class Player {
         this._moveY();
 
         // Determine animation state
+        const pressing = Input.left() || Input.right();
         if (!this.onGround) {
             this.state = 'jump';
-        } else if (Math.abs(this.vx) > 0.2) {
+        } else if (pressing && Math.abs(this.vx) > 0.2) {
             // Check if skidding (moving opposite to input)
             if ((this.vx > 0 && Input.left()) || (this.vx < 0 && Input.right())) {
                 this.state = 'skid';
