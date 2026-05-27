@@ -5,7 +5,7 @@ class Goomba {
         this.y = row * C.TILE;
         this.w = 20 * C.SCALE;  // 20px sprite, 2x scale = 40
         this.h = 24 * C.SCALE;  // 24px sprite, 2x scale = 48
-        this.vx = -C.ENEMY_SPEED;
+        this.vx = 0;
         this.vy = 0;
         this.onGround = false;
         this.alive = true;
@@ -14,6 +14,7 @@ class Goomba {
         this.animTimer = 0;
         this.animFrame = 0;
         this.active = false;  // activated when player approaches
+        this.vx = (col % 2 === 0) ? -C.ENEMY_SPEED : C.ENEMY_SPEED;
     }
 
     update(dt) {
@@ -154,12 +155,12 @@ class Turtle extends Goomba {
     }
 
     draw(ctx) {
-        const frame = this.shell ? 'Turtle_4' : `Turtle_${this.animFrame % 2}`;
+        const frame = this.shell ? 'turtle_4' : `turtle_${this.animFrame % 2}`;
         if (!sprites.frameExists('turtle', frame)) {
-            ctx.fillStyle = this.shell ? '#228B22' : '#006400';
+            ctx.fillStyle = this.shell ? '#228B22' : '#3A7D44';
             ctx.fillRect(this.x, this.y, this.w, this.h);
             return;
         }
-        sprites.drawFrame(ctx, 'turtle', frame, this.x, this.y);
+        sprites.drawFrame(ctx, 'turtle', frame, this.x, this.y, !this.shell && this.vx > 0);
     }
 }

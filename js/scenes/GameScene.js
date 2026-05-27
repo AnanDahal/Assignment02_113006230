@@ -268,11 +268,16 @@ class GameScene {
     }
 
     draw(ctx) {
-        // Sky background
-        ctx.fillStyle = C.SKY;
+        // Sky gradient
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, C.H);
+        skyGrad.addColorStop(0, '#4080E8');
+        skyGrad.addColorStop(0.6, C.SKY);
+        skyGrad.addColorStop(1, '#A8D4FF');
+        ctx.fillStyle = skyGrad;
         ctx.fillRect(0, 0, C.W, C.H);
 
-        // Clouds (parallax)
+        // Background hills + clouds (parallax)
+        this._drawBackground(ctx);
         this._drawClouds(ctx);
 
         this.camera.begin(ctx);
@@ -310,15 +315,65 @@ class GameScene {
         if (this.introActive) this._drawIntro(ctx);
     }
 
+    _drawBackground(ctx) {
+        const T = C.TILE;
+        const groundY = 12 * T;  // y pixel of ground
+        const camX = this.camera.x;
+
+        // Far hills (slow parallax 0.15)
+        const farOff = camX * 0.15;
+        ctx.fillStyle = '#2E7D32';
+        [[300, 0.9], [700, 0.7], [1050, 1.0], [1400, 0.8], [1750, 0.95]].forEach(([bx, s]) => {
+            const x = bx - farOff % 2000;
+            ctx.beginPath();
+            ctx.ellipse(x, groundY, 180 * s, 55 * s, 0, Math.PI, 0);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // Near hills (medium parallax 0.4)
+        const nearOff = camX * 0.4;
+        ctx.fillStyle = '#388E3C';
+        [[150, 0.8], [480, 1.0], [820, 0.85], [1160, 1.05], [1500, 0.9]].forEach(([bx, s]) => {
+            const x = bx - nearOff % 1700;
+            ctx.beginPath();
+            ctx.ellipse(x, groundY, 120 * s, 36 * s, 0, Math.PI, 0);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        // Bushes at horizon (parallax 0.7, drawn at ground level)
+        const bushOff = camX * 0.7;
+        ctx.fillStyle = '#1B5E20';
+        [[60, 1], [280, 0.8], [500, 1.1], [720, 0.9], [940, 1.0],
+         [1160, 0.85], [1380, 1.05], [1600, 0.9]].forEach(([bx, s]) => {
+            const x = bx - bushOff % 1700;
+            ctx.beginPath();
+            ctx.arc(x,      groundY, 18 * s, Math.PI, 0);
+            ctx.arc(x + 22, groundY, 14 * s, Math.PI, 0);
+            ctx.arc(x - 18, groundY, 13 * s, Math.PI, 0);
+            ctx.fill();
+        });
+    }
+
     _drawClouds(ctx) {
         const offset = this.camera.x * 0.3;
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        [[200 - offset % 500, 55], [450 - offset % 500, 35], [700 - offset % 500, 60],
-         [950 - offset % 500, 45], [1150 - offset % 500, 65]].forEach(([x, y]) => {
+        const positions = [[160,50],[420,30],[680,58],[940,38],[1200,55],[1460,42]];
+        positions.forEach(([bx, by]) => {
+            const x = bx - offset % 1600;
+            // Shadow
+            ctx.fillStyle = 'rgba(180,200,240,0.6)';
             ctx.beginPath();
-            ctx.arc(x, y, 28, 0, Math.PI*2);
-            ctx.arc(x+28, y-8, 20, 0, Math.PI*2);
-            ctx.arc(x+50, y, 22, 0, Math.PI*2);
+            ctx.arc(x + 3, by + 5,  17, 0, Math.PI*2);
+            ctx.arc(x + 28, by - 5, 22, 0, Math.PI*2);
+            ctx.arc(x + 55, by + 5, 17, 0, Math.PI*2);
+            ctx.fill();
+            // White cloud
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(x,     by + 3,  17, 0, Math.PI*2);
+            ctx.arc(x + 25, by - 7, 22, 0, Math.PI*2);
+            ctx.arc(x + 52, by + 3, 17, 0, Math.PI*2);
             ctx.fill();
         });
     }

@@ -42,6 +42,7 @@ class MenuScene {
                 this.game.changeScene('levelSelect');
             } else if (this.selected === 1) {
                 this.showLB = true;
+                fbManager.getLeaderboard().then(lb => { this.leaderboard = lb; });
             } else {
                 showAuthModal();
             }

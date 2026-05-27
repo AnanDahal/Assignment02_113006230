@@ -19,15 +19,16 @@ class Player {
 
         this.animTimer = 0;
         this.animFrame = 0;
-        this.walkFrames  = ['mario_small_1', 'mario_small_2', 'mario_small_3'];
-        this.idleFrame   = 'mario_small_0';
-        this.jumpFrame   = 'mario_small_5';
+        // All frames from row 0 (y=1) of the sprite sheet – same color palette
+        this.walkFrames  = ['mario_small_8', 'mario_small_15', 'mario_small_18'];
+        this.idleFrame   = 'mario_small_11';
+        this.jumpFrame   = 'mario_small_25';
         this.dieFrame    = 'mario_small_7';
-        this.skidFrame   = 'mario_small_4';
+        this.skidFrame   = 'mario_small_22';
 
-        this.bigWalkFrames = ['mario_big_1', 'mario_big_2', 'mario_big_3'];
+        this.bigWalkFrames = ['mario_big_1', 'mario_big_2', 'mario_big_4'];
         this.bigIdleFrame  = 'mario_big_0';
-        this.bigJumpFrame  = 'mario_big_4';
+        this.bigJumpFrame  = 'mario_big_25';
         this.bigDuckFrame  = 'mario_big_14';
     }
 
@@ -76,11 +77,11 @@ class Player {
 
         // Horizontal input
         if (Input.left()) {
-            this.vx -= 1.2;
+            this.vx -= 0.8;
             this.facingRight = false;
             if (this.vx < -maxSpeed) this.vx = -maxSpeed;
         } else if (Input.right()) {
-            this.vx += 1.2;
+            this.vx += 0.8;
             this.facingRight = true;
             if (this.vx > maxSpeed) this.vx = maxSpeed;
         } else {

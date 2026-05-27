@@ -192,7 +192,6 @@ function buildLevel(num) {
         grid[8][16] = Q;  // Q-block (coin)
         grid[8][20] = B;  grid[8][21] = Q; grid[8][22] = B;  // BQB
         grid[8][23] = Q;  grid[8][24] = B;                    // QB
-        grid[5][22] = Q;  // hidden Q-block (mushroom)
 
         // Row 8 bricks and blocks – later section
         fill(8, 78, 78, B); grid[8][79] = Q; fill(8, 80, 80, B);
@@ -234,8 +233,8 @@ function buildLevel(num) {
             grid,
             bgm: 'bgm1',
             enemies: [
-                {type:'goomba', col:7,  row:11},
-                {type:'goomba', col:8,  row:11},
+                {type:'goomba', col:25, row:11},
+                {type:'goomba', col:27, row:11},
                 {type:'goomba', col:38, row:11},
                 {type:'goomba', col:52, row:11},
                 {type:'goomba', col:53, row:11},
@@ -246,7 +245,7 @@ function buildLevel(num) {
                 {type:'goomba', col:145,row:11},
                 {type:'turtle', col:115,row:11},
             ],
-            mushroomBlocks: [22, 79, 96],  // columns of Q-blocks that have mushrooms
+            mushroomBlocks: [21, 79, 96],  // columns of Q-blocks that have mushrooms
             spawnCol: 1, spawnRow: 11,
             flagCol: 193,
             width: W, height: H,
@@ -256,11 +255,10 @@ function buildLevel(num) {
     if (num === 2) {
         fill(12, 0, 211, G); fill(13, 0, 211, G);
         fill(12, 25, 30, T); fill(13, 25, 30, T);
-        fill(12, 80, 87, T); fill(13, 80, 87, T);
-        fill(12, 130, 137, T); fill(13, 130, 137, T);
+        fill(12, 82, 86, T); fill(13, 82, 86, T);
+        fill(12, 132, 136, T); fill(13, 132, 136, T);
 
         grid[8][15] = Q; grid[8][18] = Q; grid[8][21] = Q;
-        grid[7][18] = Q;  // hidden Q
         fill(8, 50, 54, B); grid[8][52] = Q;
         fill(6, 65, 72, B); grid[6][68] = Q;
         fill(8, 100, 107, B);
@@ -281,8 +279,8 @@ function buildLevel(num) {
         return {
             grid, bgm: 'bgm2',
             enemies: [
-                {type:'goomba', col:10, row:11},
-                {type:'goomba', col:11, row:11},
+                {type:'goomba', col:33, row:11},
+                {type:'goomba', col:35, row:11},
                 {type:'goomba', col:45, row:11},
                 {type:'turtle', col:60, row:11},
                 {type:'goomba', col:90, row:11},
@@ -299,22 +297,20 @@ function buildLevel(num) {
 
     // Level 3
     fill(12, 0, 211, G); fill(13, 0, 211, G);
-    fill(12, 20, 26, T); fill(13, 20, 26, T);
-    fill(12, 50, 57, T); fill(13, 50, 57, T);
-    fill(12, 100, 108, T); fill(13, 100, 108, T);
-    fill(12, 155, 162, T); fill(13, 155, 162, T);
+    fill(12, 21, 25, T); fill(13, 21, 25, T);
+    fill(12, 51, 55, T); fill(13, 51, 55, T);
+    fill(12, 102, 106, T); fill(13, 102, 106, T);
+    fill(12, 157, 161, T); fill(13, 157, 161, T);
 
-    grid[8][12] = Q; grid[8][17] = Q; grid[8][22] = B; grid[8][23] = Q;
-    fill(6, 40, 47, B); grid[6][43] = Q; grid[6][44] = Q;
+    grid[8][12] = Q; grid[8][17] = Q; grid[8][22] = B; grid[8][23] = B;
+    fill(8, 40, 47, B); grid[8][43] = Q; grid[8][44] = Q;
     fill(8, 85, 95, B); grid[8][88] = Q; grid[8][92] = Q;
 
     grid[9][19] = TL; grid[9][20] = TR;
     grid[10][19] = BL; grid[10][20] = BR;
     grid[11][19] = BL; grid[11][20] = BR;
 
-    grid[8][48] = TL; grid[8][49] = TR;
-    grid[9][48] = BL; grid[9][49] = BR;
-    grid[10][48] = BL; grid[10][49] = BR;
+    grid[10][48] = TL; grid[10][49] = TR;
     grid[11][48] = BL; grid[11][49] = BR;
 
     for (let s = 0; s < 8; s++) {
@@ -327,8 +323,8 @@ function buildLevel(num) {
     return {
         grid, bgm: 'bgm3',
         enemies: [
-            {type:'goomba', col:8,  row:11},
-            {type:'goomba', col:9,  row:11},
+            {type:'goomba', col:27, row:11},
+            {type:'goomba', col:29, row:11},
             {type:'turtle', col:35, row:11},
             {type:'goomba', col:60, row:11},
             {type:'turtle', col:61, row:11},

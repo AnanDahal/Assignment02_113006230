@@ -84,8 +84,8 @@ class Mushroom {
     draw(ctx) {
         if (this.collected) return;
         // Try to draw using items sprite sheet (items_79 is mushroom)
-        if (sprites.frameExists('items', 'items_79')) {
-            sprites.drawFrame(ctx, 'items', 'items_79', this.x, this.y);
+        if (sprites.frameExists('items', 'items_42')) {
+            sprites.drawFrame(ctx, 'items', 'items_42', this.x, this.y);
         } else {
             // Fallback: draw colored mushroom shape
             ctx.fillStyle = '#FF3333';

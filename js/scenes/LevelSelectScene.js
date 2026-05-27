@@ -109,6 +109,6 @@ class LevelSelectScene {
         ctx.fillStyle = C.PIPE;
         ctx.fillRect(x + w*0.6, y + h*0.5, 14, h*0.2);
         // Mario
-        sprites.drawFrame(ctx, 'mario_small', 'mario_small_0', x + 8, y + h*0.6 - 16);
+        sprites.drawFrame(ctx, 'mario_small', 'mario_small_1', x + 8, y + h*0.6 - 16);
     }
 }
