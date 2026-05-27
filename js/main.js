@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         ctx.fillText(msg, C.W/2, C.H/2);
         ctx.fillStyle = '#555';
         ctx.font = '11px monospace';
-        ctx.fillText('build v10', C.W/2, C.H/2 + 30);
+        ctx.fillText('build v11', C.W/2, C.H/2 + 30);
     }
 
     drawLoading('LOADING...');

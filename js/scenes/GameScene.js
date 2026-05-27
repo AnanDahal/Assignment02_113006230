@@ -21,6 +21,7 @@ class GameScene {
         this.flagPoleY = 0;
         this.flagSlideY = 0;
         this.levelData = null;
+        this.cheatMode = false;
     }
 
     enter(levelNum, hud) {
@@ -94,6 +95,7 @@ class GameScene {
 
         if (this.paused) {
             if (Input.wasPressed('Escape') || Input.wasPressed('KeyP')) this.paused = false;
+            if (Input.wasPressed('KeyC')) this.cheatMode = !this.cheatMode;
             return;
         }
 
@@ -106,7 +108,7 @@ class GameScene {
             this.flagTimer += dt;
             this.flagSlideY = Math.min(this.flagSlideY + 3, 300);
             if (this.flagTimer > 3) {
-                fbManager.saveScore(this.hud.score, this.levelNum);
+                if (!this.cheatMode) fbManager.saveScore(this.hud.score, this.levelNum);
                 if (this.levelNum < 3) {
                     this.game.changeScene('levelClear', { hud: this.hud, nextLevel: this.levelNum + 1 });
                 } else {
@@ -122,7 +124,7 @@ class GameScene {
             if (this.deathTimer <= 0) {
                 this.hud.lives--;
                 if (this.hud.lives <= 0) {
-                    fbManager.saveScore(this.hud.score, this.levelNum);
+                    if (!this.cheatMode) fbManager.saveScore(this.hud.score, this.levelNum);
                     this.game.changeScene('gameOver', { score: this.hud.score });
                 } else {
                     this._respawn();
@@ -254,7 +256,7 @@ class GameScene {
                 p.vy = C.JUMP_VEL * 0.6;  // bounce
                 this.hud.addScore(100);
                 this.popups.push(new ScorePopup(e.x, e.y - 10, 100));
-            } else {
+            } else if (!this.cheatMode) {
                 p.hurt();
             }
         });
@@ -307,6 +309,17 @@ class GameScene {
 
         // HUD (screen space)
         this.hud.draw(ctx);
+
+        // Cheat mode indicator
+        if (this.cheatMode) {
+            ctx.fillStyle = 'rgba(0,255,136,0.15)';
+            ctx.fillRect(0, 0, C.W, C.H);
+            ctx.fillStyle = '#00FF88';
+            ctx.font = 'bold 11px monospace';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText('CHEAT MODE', C.W - 10, C.H - 8);
+        }
 
         // Pause overlay
         if (this.paused) this._drawPause(ctx);
@@ -396,16 +409,35 @@ class GameScene {
     }
 
     _drawPause(ctx) {
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillStyle = 'rgba(0,0,0,0.65)';
         ctx.fillRect(0, 0, C.W, C.H);
-        ctx.fillStyle = '#FFD700';
-        ctx.font = 'bold 36px monospace';
+
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('PAUSED', C.W/2, C.H/2);
+
+        ctx.fillStyle = '#FFD700';
+        ctx.font = 'bold 36px monospace';
+        ctx.fillText('PAUSED', C.W/2, C.H/2 - 60);
+
         ctx.font = '16px monospace';
         ctx.fillStyle = '#FFF';
-        ctx.fillText('[ESC / P] Resume', C.W/2, C.H/2 + 40);
+        ctx.fillText('[ESC / P]  Resume', C.W/2, C.H/2);
+
+        // Cheat mode toggle
+        const cheatColor = this.cheatMode ? '#00FF88' : '#888';
+        ctx.fillStyle = cheatColor;
+        ctx.font = 'bold 16px monospace';
+        ctx.fillText(`[C]  Cheat Mode: ${this.cheatMode ? 'ON' : 'OFF'}`, C.W/2, C.H/2 + 44);
+
+        if (this.cheatMode) {
+            ctx.fillStyle = '#FF8800';
+            ctx.font = '12px monospace';
+            ctx.fillText('Enemies cannot hurt you  |  Score not saved', C.W/2, C.H/2 + 72);
+        } else {
+            ctx.fillStyle = '#555';
+            ctx.font = '12px monospace';
+            ctx.fillText('Turn on to play without enemy damage', C.W/2, C.H/2 + 72);
+        }
     }
 
     _drawIntro(ctx) {
