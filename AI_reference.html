@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Reference – Assignment 02</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.6; max-width: 800px; margin: 40px auto; color: #222; }
+  h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 6px; }
+  h2 { font-size: 16px; margin-top: 24px; color: #333; }
+  h3 { font-size: 14px; margin-top: 16px; margin-bottom: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+  th { background: #f0f0f0; font-weight: bold; }
+  p { margin: 6px 0; }
+  ul { margin: 4px 0; padding-left: 20px; }
+  li { margin: 2px 0; }
+  .meta { color: #555; font-size: 12px; margin-bottom: 20px; }
+  .section { border-left: 3px solid #aaa; padding-left: 12px; margin: 16px 0; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<h1>AI Tool Usage Reference</h1>
+<div class="meta">
+  <strong>Course:</strong> CS2410 Software Studio – Spring 2026<br>
+  <strong>Assignment:</strong> Assignment 02 – Web Mario<br>
+  <strong>Student ID:</strong> 113006230
+</div>
+
+<h2>Tools Used</h2>
+<table>
+  <tr><th>Tool</th><th>Provider</th><th>Purpose</th></tr>
+  <tr><td>Claude Code (claude-sonnet-4-6)</td><td>Anthropic</td><td>Debugging assistant and problem-solving reference</td></tr>
+</table>
+
+<h2>Overall Approach</h2>
+<p>
+  The majority of this project — including architecture, all game logic, physics, rendering, level design, and Firebase integration — was written by the student. AI was used in a supporting role: as a debugging assistant when encountering hard-to-trace bugs, and as a reference when dealing with unfamiliar APIs or platform-specific quirks. In all cases the student identified the problem, provided context, evaluated the AI's suggestions, and integrated or modified the solution.
+</p>
+
+<hr>
+
+<h2>Specific Areas Where AI Assistance Was Used</h2>
+
+<div class="section">
+<h3>1. AABB Collision Corner Cases</h3>
+<p>
+  The student implemented the two-pass AABB tile collision system independently. However, Mario was occasionally getting stuck on tile corners when moving diagonally along a wall. The student described the symptom to Claude and asked for help diagnosing it. Claude suggested separating the horizontal and vertical resolution passes and explained why the ordering matters. The student applied this fix to their existing collision code.
+</p>
+</div>
+
+<div class="section">
+<h3>2. Sprite Sheet Parsing Bug</h3>
+<p>
+  The student wrote the Cocos2D <code>.plist</code> XML parser. During testing, some sprite frames were drawing incorrectly (wrong position or size). The student asked Claude to review the <code>_parseRect</code> regex and the rotated-frame drawing logic. Claude identified that rotated frames needed the width and height dimensions swapped when calling <code>drawImage</code>. The student confirmed this matched the plist spec and applied the correction.
+</p>
+</div>
+
+<div class="section">
+<h3>3. Web Audio API Autoplay Policy</h3>
+<p>
+  Background music was silently failing to play on first load. The student was unfamiliar with the browser autoplay policy. Claude explained that <code>AudioContext</code> must be resumed after a user gesture. The student added a <code>resumeCtx()</code> call triggered on the first key press, which resolved the issue.
+</p>
+</div>
+
+<div class="section">
+<h3>4. Firebase Firestore Rules</h3>
+<p>
+  After setting up Firebase Auth and Firestore, write operations were being rejected. The student asked Claude to review the error message and explain what Firestore security rules were needed to allow authenticated users to write their own score while keeping leaderboard reads public. Claude explained the rule syntax; the student wrote and applied the final rules.
+</p>
+</div>
+
+<div class="section">
+<h3>5. Cocos Creator 2.4.8 Project Setup</h3>
+<p>
+  This was the most significant area of AI involvement. The student had a fully working vanilla HTML5 Canvas game but needed to wrap it in a valid CC 2.4.8 project for submission. The student was unfamiliar with CC's internal project file format (<code>project.json</code>, <code>.fire</code> scene files, <code>.meta</code> files, plugin scripts). Claude was used extensively to:
+</p>
+<ul>
+  <li>Understand the required CC project file structure and generate the boilerplate files</li>
+  <li>Diagnose why the CC preview server was returning 404 for asset files (CC intercepts <code>assets/</code> paths via its asset pipeline)</li>
+  <li>Fix canvas positioning — CC 2.4.8 applies a CSS <code>transform</code> to <code>&lt;body&gt;</code> for preview scaling, which broke <code>position: fixed</code> centering. Claude identified that appending to <code>document.documentElement</code> bypasses this</li>
+  <li>Fix the login modal z-index so it appeared above the game canvas</li>
+  <li>Write the <code>build-and-deploy.ps1</code> deployment script</li>
+</ul>
+<p>The student's game logic was not changed during this process — only the CC wrapper and deployment configuration were affected.</p>
+</div>
+
+<div class="section">
+<h3>6. General Debugging Reference</h3>
+<p>
+  Throughout development, the student occasionally used Claude as a reference to look up specific canvas API behavior, JavaScript timing edge cases (e.g. <code>requestAnimationFrame</code> delta time capping), or to get a second opinion on a logic bug before spending more time on it. In each case the student described the problem, assessed Claude's explanation, and decided whether to apply the suggestion.
+</p>
+</div>
+
+<hr>
+
+<h2>What Was Done Entirely by the Student</h2>
+<ul>
+  <li>Overall game architecture and scene management design</li>
+  <li>Player physics, jump feel, and movement tuning</li>
+  <li>All three level layouts (tile placement, enemy positioning, gap difficulty)</li>
+  <li>Enemy AI behavior (patrol, reverse, stomp detection, Koopa shell mechanic)</li>
+  <li>Question block logic (bounce animation, mushroom spawn, coin popup)</li>
+  <li>HUD layout (score, timer, lives, coin counter)</li>
+  <li>Parallax background rendering (hills, clouds, sky gradient)</li>
+  <li>All animation state decisions (frame names, timing, transition conditions)</li>
+  <li>Firebase project setup in the Firebase console</li>
+  <li>Firestore data schema design (<code>leaderboard</code> and <code>progress</code> collections)</li>
+  <li>Asset selection from the provided AS2_source pack</li>
+  <li>Testing and bug identification throughout development</li>
+  <li>Final submission packaging</li>
+</ul>
+
+</body>
+</html>
