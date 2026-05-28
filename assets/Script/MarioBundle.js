@@ -2551,7 +2551,7 @@ class Game {
         '#gameCanvas { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%,-50%) !important; z-index: 99999 !important; image-rendering: pixelated; image-rendering: crisp-edges; border: 3px solid #444; }',
         '#userInfo { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); color: #FFD700; font-size: 11px; height: 16px; z-index: 99998; white-space: nowrap; }',
         '#controls { position: fixed; bottom: 4px; left: 0; right: 0; color: #666; font-size: 10px; text-align: center; line-height: 1.6; z-index: 99998; }',
-        '#loginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }',
+        '#loginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9999999; align-items: center; justify-content: center; }',
         '#loginModal.active { display: flex; }',
         '.modal-box { background: #1a1a2e; border: 3px solid #FFD700; border-radius: 8px; padding: 28px 24px; width: 320px; text-align: center; color: white; }',
         '.modal-box h2 { color: #FFD700; margin-bottom: 18px; font-size: 18px; }',
@@ -2689,7 +2689,7 @@ class Game {
         ctx.fillText('LOADING...', 400, 225);
         ctx.fillStyle = '#555';
         ctx.font = '11px monospace';
-        ctx.fillText('build v15-cc', 400, 255);
+        ctx.fillText('build v16-cc', 400, 255);
 
         // Load Firebase SDK
         await loadFirebaseSDK();
