@@ -4,7 +4,12 @@
       true
     ]
   ],
-  "excluded-modules": [],
+  "excluded-modules": [
+    "3D Physics/cannon.js",
+    "3D Physics/Builtin",
+    "3D Particle",
+    "SafeArea"
+  ],
   "group-list": [
     "default"
   ],
@@ -19,5 +24,8 @@
   "simulator-resolution": {
     "width": 800,
     "height": 450
-  }
+  },
+  "migrate-history": [
+    "cloud-function"
+  ]
 }

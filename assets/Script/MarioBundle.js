@@ -61,6 +61,7 @@ class SpriteManager {
     }
 
     _parseDict(node) {
+        if (!node) return {};
         const obj = {};
         const ch = Array.from(node.children);
         for (let i = 0; i + 1 < ch.length; i += 2)
@@ -102,31 +103,63 @@ class SpriteManager {
             img.src = imgPath;
             this.images[name] = img;
 
-            fetch(plistPath)
-                .then(r => r.text())
-                .then(xml => {
-                    const data = this._parsePlist(xml);
-                    const rawFrames = data.frames || {};
+            const finishFrames = (frames) => {
+                this.sheets[name] = { img, frames };
+                this.loaded++;
+                tryResolve();
+            };
+
+            const parseMetaJSON = (text) => {
+                try {
+                    const meta = JSON.parse(text);
+                    const subMetas = meta.subMetas;
+                    if (!subMetas || !Object.keys(subMetas).length) return null;
                     const frames = {};
-                    for (const [k, v] of Object.entries(rawFrames)) {
-                        const frameName = k.replace(/\.png$/i, '');
-                        const rect = this._parseRect(v.textureRect || '{{0,0},{16,16}}');
-                        const size = this._parseSize(v.spriteSize || '{16,16}');
-                        frames[frameName] = {
-                            sx: rect.x, sy: rect.y, sw: rect.w, sh: rect.h,
-                            dw: size.w, dh: size.h,
-                            rotated: v.textureRotated === true
+                    for (const [k, v] of Object.entries(subMetas)) {
+                        const fn = k.replace(/\.png$/i, '');
+                        frames[fn] = {
+                            sx: v.trimX, sy: v.trimY,
+                            sw: v.width, sh: v.height,
+                            dw: v.rawWidth || v.width, dh: v.rawHeight || v.height,
+                            rotated: !!v.rotated
                         };
                     }
-                    this.sheets[name] = { img, frames };
-                    this.loaded++;
-                    tryResolve();
+                    return Object.keys(frames).length ? frames : null;
+                } catch(e) { return null; }
+            };
+
+            const tryXML = () => {
+                fetch(plistPath)
+                    .then(r => r.text())
+                    .then(xml => {
+                        try {
+                            const data = this._parsePlist(xml);
+                            const rawFrames = (data && data.frames) || {};
+                            const frames = {};
+                            for (const [k, v] of Object.entries(rawFrames)) {
+                                const fn = k.replace(/\.png$/i, '');
+                                const rect = this._parseRect(v.textureRect || '{{0,0},{16,16}}');
+                                const size = this._parseSize(v.spriteSize || '{16,16}');
+                                frames[fn] = {
+                                    sx: rect.x, sy: rect.y, sw: rect.w, sh: rect.h,
+                                    dw: size.w, dh: size.h,
+                                    rotated: v.textureRotated === true
+                                };
+                            }
+                            finishFrames(frames);
+                        } catch(e) { finishFrames({}); }
+                    })
+                    .catch(() => finishFrames({}));
+            };
+
+            // Try CC-generated .plist.meta JSON first (reliable), fall back to XML
+            fetch(plistPath + '.meta')
+                .then(r => r.text())
+                .then(text => {
+                    const frames = parseMetaJSON(text);
+                    if (frames) { finishFrames(frames); } else { tryXML(); }
                 })
-                .catch(() => {
-                    this.sheets[name] = { img, frames: {} };
-                    this.loaded++;
-                    tryResolve();
-                });
+                .catch(() => tryXML());
         });
     }
 
@@ -2572,11 +2605,14 @@ class Game {
     }
 
     function hideCC() {
-        var el = document.getElementById('GameDiv') || document.getElementById('Cocos2dGameContainer');
-        if (el) el.style.display = 'none';
-        var cv = document.getElementById('GameCanvas');
-        if (cv) cv.style.display = 'none';
+        ['GameDiv', 'Cocos2dGameContainer', 'GameCanvas', 'splash', 'cc_splash_layerbody'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.display = 'none'; el.style.visibility = 'hidden'; }
+        });
         document.body.style.background = '#111';
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.body.style.overflow = 'hidden';
     }
 
     function getOrCreateCanvas() {
@@ -2641,7 +2677,7 @@ class Game {
         ctx.fillText('LOADING...', 400, 225);
         ctx.fillStyle = '#555';
         ctx.font = '11px monospace';
-        ctx.fillText('build v12-cc', 400, 255);
+        ctx.fillText('build v13-cc', 400, 255);
 
         // Load Firebase SDK
         await loadFirebaseSDK();
