@@ -2586,43 +2586,55 @@ class Game {
 
     function injectModal() {
         if (document.getElementById('loginModal')) return;
-        document.body.insertAdjacentHTML('beforeend', MODAL_HTML);
+        var tmp = document.createElement('div');
+        tmp.innerHTML = MODAL_HTML;
+        document.documentElement.appendChild(tmp.firstChild);
     }
 
     function injectUserInfo() {
         if (document.getElementById('userInfo')) return;
         var div = document.createElement('div');
         div.id = 'userInfo';
-        document.body.appendChild(div);
+        div.style.cssText = 'position:fixed;bottom:42px;left:0;right:0;text-align:center;color:#FFD700;font-size:11px;height:16px;z-index:99998;pointer-events:none;font-family:monospace;';
+        document.documentElement.appendChild(div);
     }
 
     function injectControls() {
         if (document.getElementById('controls')) return;
         var div = document.createElement('div');
         div.id = 'controls';
+        div.style.cssText = 'position:fixed;bottom:4px;left:0;right:0;text-align:center;color:#666;font-size:10px;z-index:99998;pointer-events:none;font-family:monospace;line-height:1.6;';
         div.innerHTML = '&#8592; &#8594; Move &nbsp;|&nbsp; &#8593; / Space Jump &nbsp;|&nbsp; Shift Run &nbsp;|&nbsp; P/Esc Pause';
-        document.body.appendChild(div);
+        document.documentElement.appendChild(div);
     }
 
     function hideCC() {
         ['GameDiv', 'Cocos2dGameContainer', 'GameCanvas', 'splash', 'cc_splash_layerbody'].forEach(function(id) {
             var el = document.getElementById(id);
-            if (el) { el.style.display = 'none'; el.style.visibility = 'hidden'; }
+            if (el) el.style.cssText = 'display:none!important;visibility:hidden!important;width:0!important;height:0!important;';
         });
-        document.body.style.background = '#111';
-        document.body.style.margin = '0';
-        document.body.style.padding = '0';
-        document.body.style.overflow = 'hidden';
     }
 
     function getOrCreateCanvas() {
         var canvas = document.getElementById('gameCanvas');
         if (!canvas) {
+            // Append wrapper to <html>, NOT <body>.
+            // CC transforms <body> for preview scaling; position:fixed on body children
+            // is positioned relative to that transform instead of the real viewport.
+            // Children of <html> (no transform) always position against the viewport.
+            var wrap = document.getElementById('marioWrap');
+            if (!wrap) {
+                wrap = document.createElement('div');
+                wrap.id = 'marioWrap';
+                wrap.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;display:flex;justify-content:center;align-items:center;pointer-events:none;background:#111;';
+                document.documentElement.appendChild(wrap);
+            }
             canvas = document.createElement('canvas');
             canvas.id = 'gameCanvas';
             canvas.width = 800;
             canvas.height = 450;
-            document.body.appendChild(canvas);
+            canvas.style.cssText = 'display:block;flex-shrink:0;pointer-events:auto;border:3px solid #444;image-rendering:pixelated;image-rendering:crisp-edges;';
+            wrap.appendChild(canvas);
         }
         return canvas;
     }
@@ -2677,7 +2689,7 @@ class Game {
         ctx.fillText('LOADING...', 400, 225);
         ctx.fillStyle = '#555';
         ctx.font = '11px monospace';
-        ctx.fillText('build v14-cc', 400, 255);
+        ctx.fillText('build v15-cc', 400, 255);
 
         // Load Firebase SDK
         await loadFirebaseSDK();
@@ -2721,12 +2733,11 @@ class Game {
         }
     }
 
-    // Continuously hide CC UI elements as they appear (CC creates them after plugin scripts run)
+    // Continuously hide CC UI and keep wrapper visible (CC elements appear after plugin scripts)
     var _ccHideTimer = setInterval(function() {
-        ['GameDiv', 'Cocos2dGameContainer', 'GameCanvas', 'splash', 'cc_splash_layerbody'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) el.style.cssText = 'display:none!important;visibility:hidden!important;width:0!important;height:0!important;position:absolute!important;';
-        });
+        hideCC();
+        var wrap = document.getElementById('marioWrap');
+        if (wrap && wrap.style.display === 'none') wrap.style.display = 'flex';
     }, 100);
     setTimeout(function() { clearInterval(_ccHideTimer); }, 15000);
 
