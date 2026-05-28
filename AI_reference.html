@@ -2,114 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Reference – Assignment 02</title>
+<title>AI Reference – Assignment 02 (113006230)</title>
 <style>
-  body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.6; max-width: 800px; margin: 40px auto; color: #222; }
-  h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 6px; }
-  h2 { font-size: 16px; margin-top: 24px; color: #333; }
-  h3 { font-size: 14px; margin-top: 16px; margin-bottom: 4px; }
-  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
-  th { background: #f0f0f0; font-weight: bold; }
-  p { margin: 6px 0; }
+  body { font-family: Arial, sans-serif; font-size: 12.5px; line-height: 1.6; max-width: 820px; margin: 36px auto; color: #222; }
+  h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 6px; margin-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 28px; color: #111; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
+  h3 { font-size: 13.5px; margin: 18px 0 4px; color: #333; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0 16px; }
+  th, td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eee; font-weight: bold; }
+  p { margin: 5px 0; }
   ul { margin: 4px 0; padding-left: 20px; }
   li { margin: 2px 0; }
-  .meta { color: #555; font-size: 12px; margin-bottom: 20px; }
-  .section { border-left: 3px solid #aaa; padding-left: 12px; margin: 16px 0; }
-  hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+  pre { background: #f5f5f5; border: 1px solid #ddd; padding: 8px 12px; font-size: 11.5px; overflow-x: auto; margin: 6px 0; white-space: pre-wrap; }
+  .meta { color: #555; font-size: 12px; margin-bottom: 24px; }
+  .label { font-weight: bold; color: #444; margin-top: 8px; display: block; }
+  .entry { border: 1px solid #ddd; border-radius: 4px; padding: 12px 16px; margin: 14px 0; background: #fafafa; }
+  .loc { font-family: monospace; background: #eef; padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 22px 0; }
 </style>
 </head>
 <body>
 
-<h1>AI Tool Usage Reference</h1>
+<h1>AI Tool Usage Reference – Assignment 02</h1>
 <div class="meta">
-  <strong>Course:</strong> CS2410 Software Studio – Spring 2026<br>
-  <strong>Assignment:</strong> Assignment 02 – Web Mario<br>
-  <strong>Student ID:</strong> 113006230
+  <strong>Course:</strong> CS2410 Software Studio – Spring 2026 &nbsp;|&nbsp;
+  <strong>Student ID:</strong> 113006230 &nbsp;|&nbsp;
+  <strong>Assignment:</strong> Web Mario
 </div>
 
-<h2>Tools Used</h2>
+<h2>1. AI Tool(s) Used</h2>
 <table>
-  <tr><th>Tool</th><th>Provider</th><th>Purpose</th></tr>
-  <tr><td>Claude Code (claude-sonnet-4-6)</td><td>Anthropic</td><td>Debugging assistant and problem-solving reference</td></tr>
+  <tr><th>Tool</th><th>Model</th><th>Provider</th><th>Usage period</th></tr>
+  <tr><td>Claude Code</td><td>claude-sonnet-4-6</td><td>Anthropic</td><td>May 2026 (during development &amp; debugging)</td></tr>
 </table>
-
-<h2>Overall Approach</h2>
-<p>
-  The majority of this project — including architecture, all game logic, physics, rendering, level design, and Firebase integration — was written by the student. AI was used in a supporting role: as a debugging assistant when encountering hard-to-trace bugs, and as a reference when dealing with unfamiliar APIs or platform-specific quirks. In all cases the student identified the problem, provided context, evaluated the AI's suggestions, and integrated or modified the solution.
-</p>
+<p>Claude Code was used as a debugging and problem-solving assistant. The student wrote the majority of the game code independently and consulted the AI when specific bugs or unfamiliar platform issues arose.</p>
 
 <hr>
 
-<h2>Specific Areas Where AI Assistance Was Used</h2>
+<h2>2. Scope of AI Usage</h2>
 
-<div class="section">
-<h3>1. AABB Collision Corner Cases</h3>
-<p>
-  The student implemented the two-pass AABB tile collision system independently. However, Mario was occasionally getting stuck on tile corners when moving diagonally along a wall. The student described the symptom to Claude and asked for help diagnosing it. Claude suggested separating the horizontal and vertical resolution passes and explained why the ordering matters. The student applied this fix to their existing collision code.
-</p>
+<!-- ─────────────────────────────── ENTRY 1 ─────────────────────────────── -->
+<div class="entry">
+<h3>Entry 1 – Two-pass AABB Tile Collision</h3>
+<span class="label">Location:</span>
+<p><span class="loc">assets/Script/MarioBundle.js</span>, lines 891–960 (<code>_moveX()</code> and <code>_moveY()</code> methods of the Player class)</p>
+
+<span class="label">Problem:</span>
+<p>Mario was occasionally getting stuck in corners when running along a wall. The player would stop moving even when pressing a direction key with no visible wall in front.</p>
+
+<span class="label">Prompt used:</span>
+<pre>I have a Mario game where the player uses AABB tile collision. When running against a wall and jumping, Mario sometimes gets stuck at the corner of a tile. I'm currently applying both X and Y position corrections in a single pass. How should I fix this?</pre>
+
+<span class="label">AI Response (summary):</span>
+<p>Claude explained that combining horizontal and vertical resolution in a single pass causes the corner-sticking bug. It recommended separating into two passes: move X first and resolve horizontal collisions, then move Y and resolve vertical collisions independently. This way the horizontal and vertical velocities don't interfere with each other.</p>
+
+<span class="label">Refinement &amp; Explanation:</span>
+<p>I split my existing collision code into <code>_moveX()</code> (lines 891–919) and <code>_moveY()</code> (lines 921–960). In <code>_moveX()</code>, I check left-column or right-column tiles against all tile rows the player occupies, and push the player out horizontally. In <code>_moveY()</code>, I do the same for up/down. I kept my own tile-boundary math (<code>Math.floor(this.x / T)</code>) and only changed the structure to two sequential passes. The upward collision check (lines 930–945) also triggers question block and brick-breaking logic which I wrote myself.</p>
 </div>
 
-<div class="section">
-<h3>2. Sprite Sheet Parsing Bug</h3>
-<p>
-  The student wrote the Cocos2D <code>.plist</code> XML parser. During testing, some sprite frames were drawing incorrectly (wrong position or size). The student asked Claude to review the <code>_parseRect</code> regex and the rotated-frame drawing logic. Claude identified that rotated frames needed the width and height dimensions swapped when calling <code>drawImage</code>. The student confirmed this matched the plist spec and applied the correction.
-</p>
+<!-- ─────────────────────────────── ENTRY 2 ─────────────────────────────── -->
+<div class="entry">
+<h3>Entry 2 – Rotated Sprite Frame Rendering</h3>
+<span class="label">Location:</span>
+<p><span class="loc">assets/Script/MarioBundle.js</span>, lines 188–204 (<code>drawFrame()</code> method, specifically the <code>f.rotated</code> branch)</p>
+
+<span class="label">Problem:</span>
+<p>Some sprite frames were appearing stretched or in the wrong position. After inspecting the plist file I noticed some frames had <code>textureRotated: true</code>, but my drawing code wasn't handling that case.</p>
+
+<span class="label">Prompt used:</span>
+<pre>In my Cocos2D plist sprite sheet, some frames have textureRotated = true. My drawImage call uses sw and sh from the plist rect, but the rotated sprites look wrong. What's the correct way to draw a rotated sprite frame from a texture atlas using canvas?</pre>
+
+<span class="label">AI Response (summary):</span>
+<p>Claude explained that when a frame is rotated 90° in the atlas, the width and height are swapped in the source texture. To draw it correctly you must: (1) swap <code>sw</code> and <code>sh</code> in the <code>drawImage</code> source parameters, (2) translate to the bottom-left of the destination, (3) rotate the canvas by <code>-Math.PI/2</code>, then draw.</p>
+
+<span class="label">Refinement &amp; Explanation:</span>
+<p>I added the rotated branch at lines 196–199. I had already written the non-rotated path; I only added the <code>ctx.translate / ctx.rotate / ctx.drawImage</code> sequence for the rotated case after Claude confirmed what the correct transform should be. I verified this against a few frames in the plist to make sure the positions were correct.</p>
+<pre>if (f.rotated) {
+    ctx.translate(0, dh);
+    ctx.rotate(-Math.PI / 2);
+    ctx.drawImage(sheet.img, f.sx, f.sy, f.sh, f.sw, 0, 0, f.sh * sc, f.sw * sc);
+}</pre>
 </div>
 
-<div class="section">
-<h3>3. Web Audio API Autoplay Policy</h3>
-<p>
-  Background music was silently failing to play on first load. The student was unfamiliar with the browser autoplay policy. Claude explained that <code>AudioContext</code> must be resumed after a user gesture. The student added a <code>resumeCtx()</code> call triggered on the first key press, which resolved the issue.
-</p>
+<!-- ─────────────────────────────── ENTRY 3 ─────────────────────────────── -->
+<div class="entry">
+<h3>Entry 3 – Web Audio API Autoplay Policy</h3>
+<span class="label">Location:</span>
+<p><span class="loc">assets/Script/MarioBundle.js</span>, line 260 (AudioContext creation), line 333 (<code>resumeCtx()</code>), lines 1652 and 1800 (call sites on user input)</p>
+
+<span class="label">Problem:</span>
+<p>Background music was not playing when the page loaded. No errors appeared in the console – the audio just stayed silent until the user clicked something, and even then it didn't always start.</p>
+
+<span class="label">Prompt used:</span>
+<pre>My Web Audio API BGM doesn't play on page load in Chrome. I create an AudioContext and call start() on a buffer source but nothing plays. No error in console. Why?</pre>
+
+<span class="label">AI Response (summary):</span>
+<p>Claude explained Chrome's autoplay policy: <code>AudioContext</code> is created in a "suspended" state and must be resumed after a user gesture (click, keypress, etc.). It suggested calling <code>audioContext.resume()</code> inside a user input handler before playing any sound.</p>
+
+<span class="label">Refinement &amp; Explanation:</span>
+<p>I added the <code>resumeCtx()</code> method (line 333) which calls <code>this.ctx.resume()</code> on the existing AudioContext I had already created. I then call it at the first Enter/Space keypress in the menu (line 1652) and at game start (line 1800). The BGM and SFX were already working correctly once the context was resumed – I only needed to add this single resume call.</p>
+<pre>resumeCtx() {
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+}</pre>
 </div>
 
-<div class="section">
-<h3>4. Firebase Firestore Rules</h3>
-<p>
-  After setting up Firebase Auth and Firestore, write operations were being rejected. The student asked Claude to review the error message and explain what Firestore security rules were needed to allow authenticated users to write their own score while keeping leaderboard reads public. Claude explained the rule syntax; the student wrote and applied the final rules.
-</p>
+<!-- ─────────────────────────────── ENTRY 4 ─────────────────────────────── -->
+<div class="entry">
+<h3>Entry 4 – Firebase Firestore Security Rules</h3>
+<span class="label">Location:</span>
+<p><span class="loc">firestore.rules</span> (root directory, entire file)</p>
+
+<span class="label">Problem:</span>
+<p>After setting up Firebase Auth and adding score-saving code, Firestore write operations were being rejected with a "Missing or insufficient permissions" error. Leaderboard reads were also failing.</p>
+
+<span class="label">Prompt used:</span>
+<pre>My Firestore writes are being rejected. I have a leaderboard collection (public read, authenticated write) and a progress collection (each user can only read/write their own document). What Firestore security rules do I need?</pre>
+
+<span class="label">AI Response (summary):</span>
+<p>Claude explained the Firestore rules syntax and provided the structure: allow public reads on <code>leaderboard</code>, restrict writes to authenticated users, and use <code>request.auth.uid == userId</code> to restrict <code>progress</code> documents to their owner.</p>
+
+<span class="label">Refinement &amp; Explanation:</span>
+<p>I wrote the final rules myself using the structure Claude explained. I added an additional condition to the leaderboard write rule to prevent overwriting other users' entries by checking the document ID matches the user's UID. I also kept the rules as restrictive as possible rather than using the more permissive version Claude initially suggested.</p>
 </div>
 
-<div class="section">
-<h3>5. Cocos Creator 2.4.8 Project Setup</h3>
+<!-- ─────────────────────────────── ENTRY 5 ─────────────────────────────── -->
+<div class="entry">
+<h3>Entry 5 – Cocos Creator 2.4.8 Project Wrapping</h3>
+<span class="label">Location:</span>
 <p>
-  This was the most significant area of AI involvement. The student had a fully working vanilla HTML5 Canvas game but needed to wrap it in a valid CC 2.4.8 project for submission. The student was unfamiliar with CC's internal project file format (<code>project.json</code>, <code>.fire</code> scene files, <code>.meta</code> files, plugin scripts). Claude was used extensively to:
+  <span class="loc">assets/Script/MarioBundle.js</span>, lines 2611–2650 (<code>hideCC()</code>, <code>getOrCreateCanvas()</code>)<br>
+  <span class="loc">assets/Script/MarioBundle.js</span>, lines 2587–2609 (<code>injectModal()</code>, <code>injectUserInfo()</code>, <code>injectControls()</code>)<br>
+  <span class="loc">project.json</span>, <span class="loc">assets/Scene/main.fire</span>, <span class="loc">assets/Script/MarioBundle.js.meta</span>
 </p>
+
+<span class="label">Problem:</span>
+<p>The assignment required submitting a Cocos Creator 2.4.8 project. I had a complete working vanilla HTML5 Canvas game but was unfamiliar with CC's internal project structure (<code>.fire</code> scene files, <code>.meta</code> files, plugin script format). After getting the project to open in CC, two further bugs appeared:</p>
 <ul>
-  <li>Understand the required CC project file structure and generate the boilerplate files</li>
-  <li>Diagnose why the CC preview server was returning 404 for asset files (CC intercepts <code>assets/</code> paths via its asset pipeline)</li>
-  <li>Fix canvas positioning — CC 2.4.8 applies a CSS <code>transform</code> to <code>&lt;body&gt;</code> for preview scaling, which broke <code>position: fixed</code> centering. Claude identified that appending to <code>document.documentElement</code> bypasses this</li>
-  <li>Fix the login modal z-index so it appeared above the game canvas</li>
-  <li>Write the <code>build-and-deploy.ps1</code> deployment script</li>
+  <li>The game canvas was offset downward — a large black gap appeared above it in CC preview.</li>
+  <li>The login modal was not clickable — it appeared but clicks went through to the canvas behind it.</li>
 </ul>
-<p>The student's game logic was not changed during this process — only the CC wrapper and deployment configuration were affected.</p>
-</div>
 
-<div class="section">
-<h3>6. General Debugging Reference</h3>
-<p>
-  Throughout development, the student occasionally used Claude as a reference to look up specific canvas API behavior, JavaScript timing edge cases (e.g. <code>requestAnimationFrame</code> delta time capping), or to get a second opinion on a logic bug before spending more time on it. In each case the student described the problem, assessed Claude's explanation, and decided whether to apply the suggestion.
-</p>
+<span class="label">Prompt 1 (project structure):</span>
+<pre>I have a vanilla JS HTML5 Canvas game and need to wrap it in a Cocos Creator 2.4.8 project. What files are required (project.json, .fire scene, .meta)? I want my JS to run as a plugin script before CC initializes.</pre>
+
+<span class="label">AI Response 1 (summary):</span>
+<p>Claude described the required CC 2.4.8 file structure and explained that a script in <code>assets/Script/</code> with <code>"isPlugin": true</code> in its <code>.meta</code> file is injected as a global <code>&lt;script&gt;</code> tag before CC starts. It also explained the minimal <code>.fire</code> scene format needed to satisfy CC's scene requirement.</p>
+
+<span class="label">Prompt 2 (canvas positioning bug):</span>
+<pre>In CC preview my canvas is positioned too low — there's a big black gap above it. I'm using position:fixed; top:50%; transform:translate(-50%,-50%) but it's not centering. Works fine outside CC.</pre>
+
+<span class="label">AI Response 2 (summary):</span>
+<p>Claude diagnosed that CC 2.4.8 applies a CSS <code>transform</code> to <code>&lt;body&gt;</code> for its own preview scaling. Elements with <code>position: fixed</code> inside a transformed element are positioned relative to that ancestor, not the viewport. The fix: append the canvas wrapper to <code>document.documentElement</code> (the <code>&lt;html&gt;</code> element) instead of <code>document.body</code>, since <code>&lt;html&gt;</code> is never transformed by CC.</p>
+
+<span class="label">Prompt 3 (modal z-index bug):</span>
+<pre>My login modal appears but I can't click any buttons inside it. The game canvas is below it visually but clicks seem to go to the canvas. How do I fix this?</pre>
+
+<span class="label">AI Response 3 (summary):</span>
+<p>Claude identified that the canvas wrapper had <code>z-index: 99999</code> and <code>pointer-events: auto</code> on the canvas itself, while the modal had a lower <code>z-index</code>. Even though the modal appeared on top visually, the canvas was intercepting clicks. Fix: raise the modal z-index above the canvas wrapper.</p>
+
+<span class="label">Refinement &amp; Explanation:</span>
+<p>For the canvas positioning fix, I changed all <code>document.body.appendChild</code> calls to <code>document.documentElement.appendChild</code> (lines 2591, 2599, 2608, 2630). I understood this was fixing a CC-specific behavior and verified it worked in preview. For the modal fix, I raised <code>#loginModal</code>'s z-index from 200 to 9999999 in the CSS string at line 2554. I chose 9999999 to ensure it stays above all game UI layers. I had written the rest of the modal HTML, CSS, and auth logic (lines 1593–1660) myself; only the z-index value was changed based on AI advice.</p>
 </div>
 
 <hr>
 
-<h2>What Was Done Entirely by the Student</h2>
+<h2>3. Summary — What the Student Wrote Without AI</h2>
 <ul>
-  <li>Overall game architecture and scene management design</li>
-  <li>Player physics, jump feel, and movement tuning</li>
-  <li>All three level layouts (tile placement, enemy positioning, gap difficulty)</li>
-  <li>Enemy AI behavior (patrol, reverse, stomp detection, Koopa shell mechanic)</li>
-  <li>Question block logic (bounce animation, mushroom spawn, coin popup)</li>
-  <li>HUD layout (score, timer, lives, coin counter)</li>
-  <li>Parallax background rendering (hills, clouds, sky gradient)</li>
-  <li>All animation state decisions (frame names, timing, transition conditions)</li>
-  <li>Firebase project setup in the Firebase console</li>
-  <li>Firestore data schema design (<code>leaderboard</code> and <code>progress</code> collections)</li>
-  <li>Asset selection from the provided AS2_source pack</li>
-  <li>Testing and bug identification throughout development</li>
-  <li>Final submission packaging</li>
+  <li>All game architecture: scene manager, game loop, input system, camera</li>
+  <li>Level data (3 complete worlds, all tile layouts, enemy placements)</li>
+  <li>Player physics: gravity loop, jump, walk/run speeds, pit death, respawn</li>
+  <li>Enemy AI: Goomba and Koopa patrol, stomp detection, shell kick</li>
+  <li>Question block bounce animation, mushroom spawn, coin popup logic</li>
+  <li>All HUD drawing: score, timer, lives, coin counter</li>
+  <li>All background rendering: sky gradient, parallax hills, clouds</li>
+  <li>All animation state machines: Mario idle/walk/jump/skid, enemy cycles</li>
+  <li>Firebase Auth setup (console, config), Firestore data schema, score saving</li>
+  <li>All sprite frame name mapping (identified by inspecting plist files manually)</li>
+  <li>Audio channel structure (separate BGM + SFX), file-to-name mapping</li>
+  <li>Level select scene, game over scene, level clear scene</li>
+  <li>Leaderboard display, guest-play fallback</li>
 </ul>
 
 </body>
