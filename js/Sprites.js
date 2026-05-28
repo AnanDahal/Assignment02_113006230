@@ -100,6 +100,7 @@ class SpriteManager {
         if (!sheet) return;
         const f = sheet.frames[frameName];
         if (!f) return;
+        if (!sheet.img || !sheet.img.complete || sheet.img.naturalWidth === 0) return;
         const sc = C.SCALE;
         const dw = f.dw * sc, dh = f.dh * sc;
 
@@ -125,7 +126,7 @@ class SpriteManager {
     // Draw raw image
     drawImage(ctx, name, dx, dy, dw, dh) {
         const img = this.images[name];
-        if (img) ctx.drawImage(img, dx, dy, dw, dh);
+        if (img && img.complete && img.naturalWidth > 0) ctx.drawImage(img, dx, dy, dw, dh);
     }
 
     frameExists(sheetName, frameName) {

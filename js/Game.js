@@ -44,9 +44,13 @@ class Game {
         const dt = Math.min((timestamp - this.lastTime) / 1000, 1/30);
         this.lastTime = timestamp;
 
-        if (this.scene) {
-            this.scene.update(dt);
-            this.scene.draw(this.ctx);
+        try {
+            if (this.scene) {
+                this.scene.update(dt);
+                this.scene.draw(this.ctx);
+            }
+        } catch(e) {
+            console.error('Game loop error:', e);
         }
 
         Input.clearFrame();

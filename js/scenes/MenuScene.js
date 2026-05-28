@@ -51,10 +51,10 @@ class MenuScene {
 
     draw(ctx) {
         // Background
-        ctx.drawImage(sprites.images['menu_bg'] || document.createElement('canvas'),
-                      0, 0, C.W, C.H);
-        // Sky fallback
-        if (!sprites.images['menu_bg'] || !sprites.images['menu_bg'].complete) {
+        const menuBg = sprites.images['menu_bg'];
+        if (menuBg && menuBg.complete && menuBg.naturalWidth > 0) {
+            ctx.drawImage(menuBg, 0, 0, C.W, C.H);
+        } else {
             ctx.fillStyle = C.SKY;
             ctx.fillRect(0, 0, C.W, C.H);
             this._drawClouds(ctx);

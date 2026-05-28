@@ -147,6 +147,7 @@ class SpriteManager {
         if (!sheet) return;
         const f = sheet.frames[frameName];
         if (!f) return;
+        if (!sheet.img || !sheet.img.complete || sheet.img.naturalWidth === 0) return;
         const sc = C.SCALE;
         const dw = f.dw * sc, dh = f.dh * sc;
 
@@ -172,7 +173,7 @@ class SpriteManager {
     // Draw raw image
     drawImage(ctx, name, dx, dy, dw, dh) {
         const img = this.images[name];
-        if (img) ctx.drawImage(img, dx, dy, dw, dh);
+        if (img && img.complete && img.naturalWidth > 0) ctx.drawImage(img, dx, dy, dw, dh);
     }
 
     frameExists(sheetName, frameName) {
@@ -1629,10 +1630,10 @@ class MenuScene {
 
     draw(ctx) {
         // Background
-        ctx.drawImage(sprites.images['menu_bg'] || document.createElement('canvas'),
-                      0, 0, C.W, C.H);
-        // Sky fallback
-        if (!sprites.images['menu_bg'] || !sprites.images['menu_bg'].complete) {
+        const menuBg = sprites.images['menu_bg'];
+        if (menuBg && menuBg.complete && menuBg.naturalWidth > 0) {
+            ctx.drawImage(menuBg, 0, 0, C.W, C.H);
+        } else {
             ctx.fillStyle = C.SKY;
             ctx.fillRect(0, 0, C.W, C.H);
             this._drawClouds(ctx);
@@ -2492,9 +2493,13 @@ class Game {
         const dt = Math.min((timestamp - this.lastTime) / 1000, 1/30);
         this.lastTime = timestamp;
 
-        if (this.scene) {
-            this.scene.update(dt);
-            this.scene.draw(this.ctx);
+        try {
+            if (this.scene) {
+                this.scene.update(dt);
+                this.scene.draw(this.ctx);
+            }
+        } catch(e) {
+            console.error('Game loop error:', e);
         }
 
         Input.clearFrame();
@@ -2568,9 +2573,9 @@ class Game {
 
     function hideCC() {
         var el = document.getElementById('GameDiv') || document.getElementById('Cocos2dGameContainer');
-        if (el) { el.style.display = 'none'; }
+        if (el) el.style.display = 'none';
         var cv = document.getElementById('GameCanvas');
-        if (cv) { cv.style.display = 'none'; }
+        if (cv) cv.style.display = 'none';
         document.body.style.background = '#111';
     }
 
@@ -2586,6 +2591,19 @@ class Game {
         return canvas;
     }
 
+    function showError(ctx, msg) {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, 800, 450);
+        ctx.fillStyle = '#FF4444';
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('ERROR: ' + String(msg).substring(0, 80), 400, 225);
+        ctx.fillStyle = '#888';
+        ctx.font = '11px monospace';
+        ctx.fillText('Check browser console for details', 400, 255);
+    }
+
     function loadFirebaseSDK() {
         return new Promise(function(resolve) {
             if (typeof firebase !== 'undefined') { resolve(); return; }
@@ -2599,7 +2617,7 @@ class Game {
                 var s = document.createElement('script');
                 s.src = sdks[i];
                 s.onload = function() { next(i + 1); };
-                s.onerror = function() { console.warn('Firebase SDK failed to load'); resolve(); };
+                s.onerror = function() { console.warn('Firebase SDK failed: ' + sdks[i]); resolve(); };
                 document.head.appendChild(s);
             }
             next(0);
@@ -2613,7 +2631,7 @@ class Game {
         var canvas = getOrCreateCanvas();
         var ctx = canvas.getContext('2d');
 
-        // Draw loading screen
+        // Loading screen
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, 800, 450);
         ctx.fillStyle = '#FFD700';
@@ -2628,13 +2646,13 @@ class Game {
         // Load Firebase SDK
         await loadFirebaseSDK();
 
-        // Inject UI elements that depend on Firebase
+        // Inject UI elements
         injectModal();
         injectUserInfo();
         injectControls();
 
         // Load audio (non-blocking)
-        audio.loadAll().catch(function(e) { console.warn('Audio load error:', e); });
+        try { audio.loadAll().catch(function(e) { console.warn('Audio:', e); }); } catch(e) {}
 
         // Load visual assets with 6s timeout
         try {
@@ -2656,10 +2674,15 @@ class Game {
 
         await new Promise(function(r) { setTimeout(r, 300); });
 
-        var game = new Game(canvas);
-        window._game = game;
-        game.init();
-        game.start();
+        try {
+            var game = new Game(canvas);
+            window._game = game;
+            game.init();
+            game.start();
+        } catch(e) {
+            console.error('Game start error:', e);
+            showError(ctx, e.message || String(e));
+        }
     }
 
     if (document.readyState === 'loading') {
