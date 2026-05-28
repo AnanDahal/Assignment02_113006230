@@ -1,3 +1,9 @@
 node_modules/
 .firebase/
 *.zip
+# Cocos Creator generated files
+library/
+local/
+temp/
+build/
+.cache/
