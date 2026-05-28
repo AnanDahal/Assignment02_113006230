@@ -225,7 +225,7 @@ class SpriteManager {
 const sprites = new SpriteManager();
 
 async function loadAllAssets() {
-    const p = 'assets/images/';
+    const p = 'res/images/';
     await Promise.all([
         sprites.loadSheet('mario_small', p+'player/mario_small.png', p+'player/mario_small.plist'),
         sprites.loadSheet('mario_big',   p+'player/mario_big.png',   p+'player/mario_big.plist'),
@@ -281,7 +281,7 @@ class AudioManager {
 
     async loadAll() {
         this.init();
-        const base = 'assets/audio/';
+        const base = 'res/audio/';
         await Promise.all([
             this.load('bgm1',       base+'bgm_1.mp3'),
             this.load('bgm2',       base+'bgm_2.mp3'),
@@ -2547,10 +2547,10 @@ class Game {
 
     var GAME_CSS = [
         '* { margin: 0; padding: 0; box-sizing: border-box; }',
-        'body { background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: monospace; }',
-        '#gameCanvas { image-rendering: pixelated; image-rendering: crisp-edges; border: 3px solid #444; display: block; max-width: 100vw; }',
-        '#userInfo { color: #FFD700; font-size: 11px; margin-top: 6px; height: 16px; }',
-        '#controls { color: #666; font-size: 10px; margin-top: 8px; text-align: center; line-height: 1.6; }',
+        'body { background: #111; font-family: monospace; overflow: hidden; }',
+        '#gameCanvas { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%,-50%) !important; z-index: 99999 !important; image-rendering: pixelated; image-rendering: crisp-edges; border: 3px solid #444; }',
+        '#userInfo { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); color: #FFD700; font-size: 11px; height: 16px; z-index: 99998; white-space: nowrap; }',
+        '#controls { position: fixed; bottom: 4px; left: 0; right: 0; color: #666; font-size: 10px; text-align: center; line-height: 1.6; z-index: 99998; }',
         '#loginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }',
         '#loginModal.active { display: flex; }',
         '.modal-box { background: #1a1a2e; border: 3px solid #FFD700; border-radius: 8px; padding: 28px 24px; width: 320px; text-align: center; color: white; }',
@@ -2677,7 +2677,7 @@ class Game {
         ctx.fillText('LOADING...', 400, 225);
         ctx.fillStyle = '#555';
         ctx.font = '11px monospace';
-        ctx.fillText('build v13-cc', 400, 255);
+        ctx.fillText('build v14-cc', 400, 255);
 
         // Load Firebase SDK
         await loadFirebaseSDK();
@@ -2720,6 +2720,15 @@ class Game {
             showError(ctx, e.message || String(e));
         }
     }
+
+    // Continuously hide CC UI elements as they appear (CC creates them after plugin scripts run)
+    var _ccHideTimer = setInterval(function() {
+        ['GameDiv', 'Cocos2dGameContainer', 'GameCanvas', 'splash', 'cc_splash_layerbody'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.style.cssText = 'display:none!important;visibility:hidden!important;width:0!important;height:0!important;position:absolute!important;';
+        });
+    }, 100);
+    setTimeout(function() { clearInterval(_ccHideTimer); }, 15000);
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() { startMarioGame(); });

@@ -11,8 +11,8 @@ if (-not (Test-Path $build)) {
 }
 
 Write-Host "Copying game assets to CC build output..." -ForegroundColor Cyan
-Copy-Item -Path "$root\assets\images" -Destination "$build\assets\" -Recurse -Force
-Copy-Item -Path "$root\assets\audio"  -Destination "$build\assets\" -Recurse -Force
+# Copy res/ (game assets served directly, outside CC's asset pipeline)
+Copy-Item -Path "$root\res" -Destination "$build\res" -Recurse -Force
 Write-Host "Assets copied." -ForegroundColor Green
 
 Write-Host "Deploying to Firebase..." -ForegroundColor Cyan
