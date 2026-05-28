@@ -131,11 +131,12 @@
 
 ## Technical Notes
 
-Built with **vanilla HTML5 Canvas** and **ES6 JavaScript classes** — no game framework.  
-Assets from the provided AS2_source package (Cocos2D TexturePacker `.plist` sprite sheets).  
-Plist files are parsed at runtime using `DOMParser`.  
+Built with **vanilla HTML5 Canvas** and **ES6 JavaScript classes** — no game framework for core logic.  
+Wrapped in a **Cocos Creator 2.4.8** project as required by the assignment, using a single plugin script (`assets/Script/MarioBundle.js`) that runs before CC initializes and takes over the page.  
+Assets (sprites, audio) live in `res/` outside CC's asset pipeline so they are served correctly on Firebase.  
+Sprite sheets use Cocos2D TexturePacker `.plist` format, parsed at runtime via `DOMParser`.  
 Audio via **Web Audio API** with separate BGM and SFX channels.  
-Firebase SDK (compat v9.22) for auth and Firestore.
+Firebase SDK (compat v9.22) for Auth and Firestore.
 
 ### Physics constants
 
@@ -153,43 +154,60 @@ Firebase SDK (compat v9.22) for auth and Firestore.
 ## File Structure
 
 ```
-index.html              Main entry point
-firebase.json           Firebase hosting + cache config
-firestore.rules         Firestore security rules
-README.md               This file
-js/
-  Constants.js          Game-wide constants, tile types, colors, physics
-  Sprites.js            Plist parser + sprite sheet drawing (flipX support)
-  Audio.js              Web Audio BGM + SFX manager
-  Input.js              Keyboard input tracker (wasPressed support)
-  Camera.js             Viewport / camera logic
-  Level.js              Level data builder + TileMap class + tile renderer
-  HUD.js                On-screen UI (score, lives, timer, coins)
-  Firebase.js           Firebase Auth + Firestore manager
-  Game.js               Main game loop + scene manager
-  main.js               Bootstrap / asset loading with timeout
+index.html                  Root entry point (redirects to CC build)
+firebase.json               Firebase Hosting + cache config
+firestore.rules             Firestore security rules
+build-and-deploy.ps1        Post-build script: copies res/ then deploys to Firebase
+README.md                   This file
+AI_reference.md             AI tool usage documentation
+
+js/                         Source JS (individual modules, for development reference)
+  Constants.js              Game-wide constants, tile types, colors, physics
+  Sprites.js                Plist parser + sprite sheet drawing (flipX support)
+  Audio.js                  Web Audio BGM + SFX manager
+  Input.js                  Keyboard input tracker (wasPressed support)
+  Camera.js                 Viewport / camera logic
+  Level.js                  Level data builder + TileMap class + tile renderer
+  HUD.js                    On-screen UI (score, lives, timer, coins)
+  Firebase.js               Firebase Auth + Firestore manager
+  Game.js                   Main game loop + scene manager
+  main.js                   Bootstrap / asset loading
   entities/
-    Player.js           Mario (small + big states, all animations)
-    Goomba.js           Goomba + Turtle (Koopa) enemies
-    Mushroom.js         Super mushroom, coin popup, score popup
-    QuestionBlock.js    Question block bounce + hit logic
+    Player.js               Mario (small + big states, all animations)
+    Goomba.js               Goomba + Turtle (Koopa) enemies
+    Mushroom.js             Super mushroom, coin popup, score popup
+    QuestionBlock.js        Question block bounce + hit logic
   scenes/
-    MenuScene.js        Main menu + leaderboard panel
-    LevelSelectScene.js World selector with mini-map previews
-    GameScene.js        Core gameplay (physics, collisions, cheat mode)
-    GameOverScene.js    Game over screen
-    LevelClearScene.js  Level complete screen
-assets/
-  audio/                MP3/WAV sound files
+    MenuScene.js            Main menu + leaderboard panel
+    LevelSelectScene.js     World selector with mini-map previews
+    GameScene.js            Core gameplay (physics, collisions, cheat mode)
+    GameOverScene.js        Game over screen
+    LevelClearScene.js      Level complete screen
+
+assets/                     Cocos Creator 2.4.8 project assets
+  Script/
+    MarioBundle.js          All game JS bundled as a CC plugin script
+  Scene/
+    main.fire               CC scene (800×450 canvas, no custom components)
+
+res/                        Static assets served directly (outside CC pipeline)
+  audio/
+    bgm_1.mp3, bgm_2.mp3, bgm_3.mp3
+    coin.wav, jump.wav, stomp.wav, kick.wav
+    loseOneLife.wav, PowerUp.mp3, powerUpAppear.wav
+    powerDown.wav, levelClear.mp3, Game Over.mp3
   images/
-    player/             mario_small.png/.plist, mario_big.png/.plist
-    enemies/            Goomba.png/.plist, Turtle.png/.plist
-    tiles/              items.png/.plist, effects.png/.plist, tileset.png
-    ui/                 menu_bg.png, title_1.png, life.png, flag.png, etc.
+    player/                 mario_small.png/.plist, mario_big.png/.plist
+    enemies/                Goomba.png/.plist, Turtle.png/.plist, Flower.png/.plist
+    tiles/                  items.png/.plist, effects.png/.plist, tileset.png
+    ui/                     menu_bg.png, title_1.png, life.png, flag.png, world.png
+
+build/
+  web-mobile/               CC build output (deployed to Firebase)
 ```
 
 ---
 
 ## AI Usage
 
-See `AI_reference.pdf` in the root directory for full AI tool usage documentation.
+See `AI_reference.md` in the root directory for full AI tool usage documentation.
